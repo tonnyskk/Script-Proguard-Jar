@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AWS SDK S3" default="publish" basedir=".">
+	<property name="src.dir" value="./src"/>
+	<property name="lib.dir" value="./lib"/>
+	<property name="classes.dir" value="./class"/>
+	<property name="publish.dir" value="./lite"/>
+	<property name="publish.s3.name" value="aws-android-sdk-1.6.1-s3-lite"/>
+	
+	<path id="lib-classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+        <delete dir="${publish.dir}"/>
+        <mkdir dir="${publish.dir}"/>
+    </target>
+    <target name="compile">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" optimize="on" deprecation="on">
+            <compilerarg line="-encoding UTF-8"/>
+            <classpath refid="lib-classpath"/>
+        </javac>
+        <copy todir="${classes.dir}">
+	        <fileset dir="${src.dir}">
+	            <include name="**/*.properties"/>
+	            <include name="mime.types"/>
+	        </fileset>
+	    </copy>
+    </target>
+    
+    <target name="s3-lite" depends="init, compile">
+ 		<jar destfile="${publish.dir}/${publish.s3.name}-init.jar" basedir="${classes.dir}">
+			<zipfileset src="${lib.dir}/aws-android-sdk-1.6.1-core.jar"/>
+			<zipfileset src="${lib.dir}/aws-android-sdk-1.6.1-s3.jar"/>
+		</jar>
+		<delete dir="${classes.dir}"/>
+    </target>
+    
+    <target name="pregard-aws-s3" depends="s3-lite">
+        <exec executable="java">
+			<arg line=" -Xmx512m" />
+			<arg line=" -jar lib/proguard4.5.1.jar" />
+			<!-- Ignor warnings-->
+			<arg line=" -ignorewarnings" />
+			<arg line=" -libraryjars ${lib.dir}/android.jar" />
+
+			<arg line=" -injar ${publish.dir}/${publish.s3.name}-init.jar" />
+			<arg line=" -outjar ${publish.dir}/${publish.s3.name}_temp.jar" />
+			<arg line=" -keepattributes SourceFile,LineNumberTable"/>
+
+			<arg line=" @proguard_aws.txt" />
+			<!--
+			<arg line=" -printmapping ${publish.dir}/proguard-${publish.s3.name}.map" />
+			<arg line=" -printusage ${publish.dir}/proguard-${publish.s3.name}.usage" />
+			-->
+		</exec>
+		<copy file="${publish.dir}/${publish.s3.name}_temp.jar" tofile="${publish.dir}/${publish.s3.name}.jar" overwrite="true" />
+		<delete quiet="true" file="${publish.dir}/${publish.s3.name}_temp.jar" />
+		<delete quiet="true" file="${publish.dir}/${publish.s3.name}-init.jar" />
+    </target>
+
+    <target name="pregard-android-v4">
+        <delete quiet="true" file="${publish.dir}/android-support-v4-lite.jar" />
+        <exec executable="java">
+			<arg line=" -Xmx512m" />
+			<arg line=" -jar lib/proguard4.5.1.jar" />
+			<!-- Ignor warnings-->
+			<arg line=" -ignorewarnings" />
+			<arg line=" -injar ${lib.dir}/android-support-v4.jar" />
+			<arg line=" -outjar ${publish.dir}/android-support-v4-lite.jar" />
+			<arg line=" -keepattributes SourceFile,LineNumberTable"/>
+			<arg line=" @proguard_androidv4.txt" />
+			<!--
+			<arg line=" -printmapping ${publish.dir}/proguard-android-support-v4-lite.map" />
+			<arg line=" -printusage ${publish.dir}/proguard-android-support-v4-lite.usage" />
+			-->
+		</exec>
+    </target>
+	<target name="publish" depends="pregard-aws-s3, pregard-android-v4" >
+	</target>
+</project>

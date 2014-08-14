@@ -1,0 +1,35 @@
+-defaultpackage ''
+-allowaccessmodification
+-dontusemixedcaseclassnames
+-keeppackagenames
+-dontobfuscate
+
+-keep class android.support.v4.view.ViewPager* {
+	<methods>;
+	<fields>;
+}
+-keep class android.support.v4.view.AccessibilityDelegateCompat* {
+	<methods>;
+	<fields>;
+}
+-keep class android.support.v4.view.KeyEventCompat* {
+	<methods>;
+	<fields>;
+}
+-keep class android.support.v4.view.ViewCompat* {
+	<methods>;
+	<fields>;
+}
+-keep class android.support.v4.view.accessibility.AccessibilityNodeInfoCompat* {
+	<methods>;
+	<fields>;
+}
+
+-keep class android.support.v4.view.accessibility.AccessibilityNodeProviderCompat* {
+	<methods>;
+	<fields>;
+}
+-keep class android.support.v4.view.accessibility.AccessibilityRecordCompat* {
+	<methods>;
+	<fields>;
+}

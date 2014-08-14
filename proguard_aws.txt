@@ -1,0 +1,30 @@
+-defaultpackage ''
+-allowaccessmodification
+-dontusemixedcaseclassnames
+-keeppackagenames
+
+-keep class com.telenav.amazon.s3.S3 {
+	<methods>;
+	<fields>;
+}
+
+-keepclassmembers class * implements android.os.Parcelable {  
+	static android.os.Parcelable$Creator CREATOR;  
+}  
+
+-keep class org.apache.velocity.** {
+	<methods>;
+	<fields>;
+}
+
+-keep class org.apache.velocity.runtime.log.NullLogSystem {
+	<methods>;
+	<fields>;
+}
+
+-keep class org.apache.velocity.runtime.log.NullLogChute {
+	<methods>;
+	<fields>;
+}
+-keep public class org.apache.commons.** { *; }
+-keep class android.**, android.** {*;}
